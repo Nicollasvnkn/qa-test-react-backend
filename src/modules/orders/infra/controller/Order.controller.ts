@@ -70,24 +70,28 @@ export class OrderController {
     return await this.getByIdOrderItemService.execute({ orderId });
   }
 
-  @Delete(':id')
+  @Delete('/item/:id')
   @HttpCode(204)
   async deleteItem(@Param('id') orderItemId: string) {
     await this.deleteOrderItemService.execute({ orderItemId });
   }
 
-  @Patch(':id')
+  @Patch('/item/:id')
   @UsePipes(new ZodValidationPipe(updateOrderItemBodySchema))
   async update(
-    @Body() body: UpdateItemDTO,
     @Param('id') orderItemId: string,
+    @Body() body: UpdateItemDTO,
   ) {
     const { quantity } = body;
 
-    return await this.updateQuantityOrderItemService.execute({
+    const orderItem = await this.updateQuantityOrderItemService.execute({
       orderItemId,
       quantity,
     });
+
+    return {
+      ...orderItem,
+    };
   }
 
   @Post('/buy')
@@ -97,7 +101,7 @@ export class OrderController {
     @Body() body: BuyOrderDTO,
   ) {
     const { orderId } = body;
-
+    
     await this.buyOrderService.execute({
       orderId,
     });

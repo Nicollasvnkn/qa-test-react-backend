@@ -11,8 +11,8 @@ import { CreateOrderItemTypes } from '@/modules/orders/application/dtos/CreateOr
 export class PrismaOrderItemRepository implements OrderItemRepository {
   constructor(private prisma: PrismaService) {}
 
-  async create(data: CreateOrderItemTypes): Promise<void> {
-    await this.prisma.orderItem.create({
+  async create(data: CreateOrderItemTypes): Promise<OrderItem> {
+    return await this.prisma.orderItem.create({
       data: {
         movieId: data.movieId,
         amount: data.amount,
@@ -42,8 +42,8 @@ export class PrismaOrderItemRepository implements OrderItemRepository {
     id: string,
     quantity: number,
     amount: number,
-  ): Promise<void> {
-    await this.prisma.orderItem.update({
+  ): Promise<OrderItem> {
+    return await this.prisma.orderItem.update({
       where: {
         id,
       },

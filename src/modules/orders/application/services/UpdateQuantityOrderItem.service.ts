@@ -8,6 +8,12 @@ interface UpdateQuantityOrderItemServiceRequest {
   quantity: number;
 }
 
+interface UpdateQuantityOrderItemServiceResponse {
+  orderItemId: string;
+  amount: number;
+  quantity: number;
+}
+
 @Injectable()
 export class UpdateQuantityOrderItemService {
   constructor(
@@ -15,7 +21,7 @@ export class UpdateQuantityOrderItemService {
     private movieRepository: MovieRepository,
   ) {}
 
-  async execute(data: UpdateQuantityOrderItemServiceRequest): Promise<void> {
+  async execute(data: UpdateQuantityOrderItemServiceRequest): Promise<UpdateQuantityOrderItemServiceResponse> {
     const orderItem = await this.orderItemRepository.findById(data.orderItemId);
 
     if (!orderItem) {
@@ -28,10 +34,16 @@ export class UpdateQuantityOrderItemService {
       throw new BadRequestException('Unable to find movie.');
     }
 
-    await this.orderItemRepository.updateQuantityAndAmount(
+    const orderItemUpdate = await this.orderItemRepository.updateQuantityAndAmount(
       data.orderItemId,
       data.quantity,
       movie.price * data.quantity,
     );
+
+    return {
+      orderItemId: orderItemUpdate.id,
+      quantity: orderItemUpdate.quantity,
+      amount: orderItemUpdate.amount
+    }
   }
 }

@@ -14,6 +14,7 @@ interface CreateOrderServiceRequest {
 
 interface CreateOrderServiceResponse {
   id: string;
+  orderItemId: string;
   success: boolean;
 }
 
@@ -44,7 +45,7 @@ export class CreateOrderItemService {
         throw new BadRequestException('This film already exists in order.');
       }
 
-      await this.orderItemRepository.create({
+      const orderItemCreate = await this.orderItemRepository.create({
         orderId: order.id,
         movieId: data.movieId,
         quantity: data.quantity,
@@ -53,6 +54,7 @@ export class CreateOrderItemService {
 
       return {
         id: order.id,
+        orderItemId: orderItemCreate.id,
         success: true,
       };
     }
@@ -69,7 +71,7 @@ export class CreateOrderItemService {
       throw new BadRequestException('This film already exists in order.');
     }
 
-    await this.orderItemRepository.create({
+    const orderItemCreate = await this.orderItemRepository.create({
       orderId: data.orderId,
       movieId: data.movieId,
       quantity: data.quantity,
@@ -78,6 +80,7 @@ export class CreateOrderItemService {
 
     return {
       id: data.orderId,
+      orderItemId: orderItemCreate.id,
       success: true,
     };
   }
